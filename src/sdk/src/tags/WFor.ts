@@ -22,8 +22,8 @@ export default class WFor extends Tag {
         if (/^<w-for/.test(tag)) {  // start tag
             let operator;
             if (/operator="{(.+?)}"/.test(tag)) { // 操作符
-                operator = RegExp.$1;
-            }else{
+                operator = RegExp.$1.replace(/&gt;/g, ">").replace(/&lt;/g, "<");
+            } else {
                 operator = true;
             }
             expression = `for(${operator}){`;

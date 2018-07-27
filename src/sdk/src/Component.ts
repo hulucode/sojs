@@ -38,6 +38,6 @@ export class Component extends BaseComponent implements IComponent {
     public onScreen() {
 
     }
-    
+
 }
 

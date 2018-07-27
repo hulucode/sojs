@@ -1,36 +1,31 @@
 import { Component } from './Component';
+import Render from './Render';
 
 export class WaterJS {
 
-    /**
-     * 组件实例
-     */
-    private _component: Component;
+    // 组件类
+    private _ComponentClass: typeof Component;
+
+    private _render: Render;
 
     /**
-     * 组件挂载节点
-     */
-    private _el: HTMLElement;
-
-    /**
-     * 
+     * 渲染组件
      * @param ComponentClass 组件类
      */
     public static render(ComponentClass: typeof Component): WaterJS {
         let waterJS: WaterJS = new WaterJS();
-        waterJS._component = new ComponentClass();
+        waterJS._ComponentClass = ComponentClass;
         return waterJS;
     }
 
     /**
-     * 
-     * @param el 挂载组件
+     * 挂载组件
+     * @param el 根节点
      */
     public mount(el: HTMLElement): WaterJS {
-        this._el = el;
-        let html = this._component.render();
-        this._el.innerHTML = html;
-        this._component.onCreate();
+        this._render = Render.render(this._ComponentClass);
+        el.appendChild(this._render.getFragment());
+        this._render.mount();
         return this;
     }
 
@@ -38,6 +33,6 @@ export class WaterJS {
      * 卸载组件
      */
     public unmount() {
-        this._component.onDestroy();
+        this._render.unmount();
     }
 }

@@ -5,15 +5,11 @@ export class Scope {
 
     private static instance: Scope;
 
-    public static getInstance(): Scope {
+    public static get scope(): string {
         if (!Scope.instance) {
             Scope.instance = new Scope();
         }
-        return Scope.instance;
-    }
-
-    public get scope(): string {
-        return this.uuid();
+        return Scope.instance.uuid();
     }
 
     private uuid() {

@@ -1,4 +1,5 @@
 import Tag from './Tag';
+import { Utils } from '../utils/Utils';
 
 export default class WIf extends Tag {
 
@@ -23,9 +24,9 @@ export default class WIf extends Tag {
             let operator;
             if (/operator="(.+?)"/.test(tag)) { // 操作符
                 if (/^{(.+?)}$/.test(RegExp.$1)) {
-                    operator = RegExp.$1;
+                    operator = RegExp.$1.replace(/&gt;/g, ">").replace(/&lt;/g, "<");
                 } else {
-                    operator = Tag.isRealBoolean(RegExp.$1);
+                    operator = Utils.isRealBoolean(RegExp.$1);
                 }
             }else{
                 operator = true;

@@ -6,17 +6,13 @@ module.exports = {
     entry: "./src/index.ts",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: 'index_bundle.js'
+        filename: 'index.js'
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
                 loader: "ts-loader"
-            },
-            {
-                test: /\.html$/,
-                loader: "html-loader"
             }
         ]
     },
@@ -24,12 +20,12 @@ module.exports = {
         extensions: [".ts",".js"]
     },
     devServer: {
-        contentBase: path.join(__dirname, 'public'), // boolean | string | array, static file location
-        compress: true, // enable gzip compression
-        historyApiFallback: true, // true for index.html upon 404, object for multiple paths
-        hot: true, // hot module replacement. Depends on HotModuleReplacementPlugin
-        https: false, // true for self-signed, object for cert authority
-        noInfo: true, // only errors & warns on hot reload
+        contentBase: path.join(__dirname, 'public'),
+        compress: true, 
+        historyApiFallback: true, 
+        hot: true, 
+        https: false,
+        noInfo: true, 
         port:8888
     },
     plugins: [

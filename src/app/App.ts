@@ -1,27 +1,27 @@
 import { Component, Template } from "water-js";
-import Menu from './Menu';
+import Button from './Button';
 
 @Template(`
 <div>
     <h1>{this.title}</h1>
-    <menu></menu>
-    <w-for operator="{let key in this.data}">
-        <w-if operator="{this.data[key].title == 123 || this.data[key].title == 789}">
-            <h3>开始<br/><div>{this.data[key].title}</div>结束</h3><br/>
+    <h3 style="color:gray;font-size:24px">这只是一个开始</h3>
+    <w-for operator="{let item of this.data}">
+        <w-if operator="{item.title > 456}">
+            <h3 style="color:red">{item.title}</h3>
+            <button class="btn" onclick="{this.buttonHandle(item.title)}">{this.button}</button>
         </w-if>
         <w-else>
-            <h2>{this.data[key].title}</h2>
+            <h3 style="color:blue">{item.title}</h3>
+            <button onclick="{this.buttonHandle('my-item')}">{this.button}</button>
         </w-else>
     </w-for>
 </div>
 `)
 export default class App extends Component {
 
-    constructor() {
-        super();
-    }
+    public title: string = '这是一个App组件';
 
-    public title: string = '我是一个App组件';
+    public button: string = '这是一个按钮';
 
     public data: any[] = [
         {
@@ -34,10 +34,21 @@ export default class App extends Component {
             title: "789"
         },
         {
-            title: "4445"
+            title: "999"
         },
         {
-            title: "4444"
+            title: "1234"
+        },
+        {
+            title: "2345"
         }
     ]
+
+    public buttonHandle(e: Event) {
+        alert('buttonHandle');
+    }
+
+    public dependencies(): typeof Component[] {
+        return [Button];
+    }
 }

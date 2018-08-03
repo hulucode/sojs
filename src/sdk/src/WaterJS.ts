@@ -1,11 +1,12 @@
 import { Component } from './Component';
-import Render from './Render';
+import { Render } from './Render';
 
 export class WaterJS {
 
     // 组件类
     private _ComponentClass: typeof Component;
 
+    // 沉浸函数
     private _render: Render;
 
     /**
@@ -24,7 +25,7 @@ export class WaterJS {
      */
     public mount(el: HTMLElement): WaterJS {
         this._render = Render.render(this._ComponentClass);
-        el.appendChild(this._render.getFragment());
+        el.appendChild(this._render.getHtmlElement());
         this._render.mount();
         return this;
     }

@@ -1,5 +1,5 @@
-import BaseComponent from './base/BaseComponent';
-import IComponent from './interface/IComponent';
+import { BaseComponent } from './base/BaseComponent';
+import { IComponent } from './interface/IComponent';
 
 /**
  * 
@@ -24,7 +24,7 @@ export function Style(style: string): Function {
 export class Component extends BaseComponent implements IComponent {
 
     public onCreate() {
-
+        
     }
 
     public onDestroy() {

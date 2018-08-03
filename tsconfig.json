@@ -6,7 +6,12 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "lib": [
+            "dom",
+            "es5",
+            "es6"
+        ]
     },
     "exclude": [
         "./node_modules"

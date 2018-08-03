@@ -1,4 +1,4 @@
-export default interface IComponent {
+export interface IComponent {
     /**
      * 组件创建
      */

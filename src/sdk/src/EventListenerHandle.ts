@@ -1,5 +1,6 @@
 
 import { BaseComponent } from './base/BaseComponent';
+import { Event } from './interface/IEvent';
 
 export interface IEventHandle {
     context: BaseComponent,
@@ -19,8 +20,9 @@ export class EventListenerHandle implements EventListenerObject {
     }
 
     handleEvent(e: Event) {
+        e.data = this.arguments;
         let handle = this.context.constructor.prototype[this.handle];
-        handle(e, this.arguments);
+        handle(e);
     }
 
 }

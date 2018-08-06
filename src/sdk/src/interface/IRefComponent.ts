@@ -1,7 +1,7 @@
 
 import { Component } from '../Component';
 
-export interface IRefComponent {
+export interface IComponentRef {
     ref: string,
     component: Component
 }

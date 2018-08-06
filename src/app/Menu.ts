@@ -1,11 +1,29 @@
-import { Component, Template } from "../sdk";
+import { Component, Template } from "water-js";
+import { Select } from './Select';
 
 @Template(`
 <div>
-    <h2 style="color:red">{this.title}</h2>
+    <for operator="{let item of this.data}">
+        <span style="color:red">{this.children.join('')}</span>
+        <select>{item}:menu里面的Select</select>
+    </for>
 </div>
 `)
 export class Menu extends Component {
-    public title = '这是一个Menu菜单';
-    public data = '';
+    private _data: number[];
+    public set data(data: number[]) {
+        this._data = data;
+    }
+    public get data(): number[] {
+        return this._data ? this._data : [];
+    }
+
+    public set test(test:any){
+        console.log('menu==>>',test);
+        
+    }
+
+    public dependencies():any{
+        return [Select];
+    }
 }

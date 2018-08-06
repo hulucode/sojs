@@ -1,8 +1,5 @@
 import { Scope } from '../utils/Scope';
-import { IRefComponent } from '../interface/IRefComponent';
 import { EventEmitter } from '../events/emitter.event';
-import { IAttribute } from '../interface/IUDComponent';
-import { EventListenerHandle } from '../EventListenerHandle';
 import { INativeEvent } from '../interface/INativeEvent';
 
 export class BaseComponent {
@@ -17,7 +14,7 @@ export class BaseComponent {
     private _scope: string;
     public get scope(): string {
         if (!this._scope) {
-            this._scope = Scope.getScope();
+            this._scope = this.randomScope();
         }
         return this._scope;
     }
@@ -35,7 +32,25 @@ export class BaseComponent {
         // 延时测试
         setTimeout(() => {
             EventEmitter.trigger('element-created', this.scope);
-        }, 1200);
+        }, 1000);
+    }
+
+    // 父级组件
+    private _parent: BaseComponent;
+    public set parent(parent: BaseComponent) {
+        this._parent = parent;
+    }
+    public get parent(): BaseComponent {
+        return this._parent;
+    }
+
+    // 模板子元素
+    private _children: string[];
+    public set children(children: string[]) {
+        this._children = children;
+    }
+    public get children(): string[] {
+        return this._children ? this._children : [];
     }
 
     // 模板编译后生成的函数
@@ -47,88 +62,26 @@ export class BaseComponent {
         this._render = render;
     }
 
-    // 引用的列表
-    private _refs: IRefComponent[];
-    public get refs(): IRefComponent[] {
-        if (!this._refs) {
-            this._refs = [];
-        }
-        return this._refs;
-    }
-    public set refs(refs: IRefComponent[]) {
-        this._refs = refs;
-    }
-
-    /**
-     * 添加引用
-     * @param ref 引用
-     */
-    public addRefComponent(ref: IRefComponent) {
-        if (!this._refs) {
-            this._refs = [];
-        }
-        this._refs.push(ref);
-    }
-
-    /**
-     * 通过scope获取组件引用
-     * @param scope 唯一标识
-     */
-    public getRefComponent(ref: string): BaseComponent {
-        let component = null;
-        if (this._refs) {
-            this._refs.forEach((reference: IRefComponent) => {
-                if (reference.ref == ref) {
-                    component = reference.component;
-                }
-            });
-        }
-        return component;
-    }
-
-    // 保存子组件里所有的属性值
-    private childAttribute: any = {};
-    public addAttrsByScope(scope: string, attributes: IAttribute[]) {
-        this.childAttribute[scope] = attributes;
-    }
-    public getAttrsByScope(scope: string): IAttribute[] {
-        return this.childAttribute[scope];
-    }
-
-    // 保存原生事件
+    // 原生事件
     private nativeEvent: any = {};
-    public addEventByScope(scope: string, event: INativeEvent) {
+    public addEventByScope(scope: string, events: INativeEvent[]) {
         if (!this.nativeEvent[scope]) {
             this.nativeEvent[scope] = [];
         }
-        this.nativeEvent[scope].push({
-            type: event.type,
-            handle: event.handle,
-            arguments: event.arguments
-        });
+        this.nativeEvent[scope].push(events);
     }
     public getEventByScope(scope: string): INativeEvent {
         return this.nativeEvent[scope];
     }
+    public get allNativeEvent(): any {
+        return this.nativeEvent;
+    }
 
     /**
-     * 监听原生事件
+     * 随机生成scope
      */
-    public addEventListener() {
-        for (let scope in this.nativeEvent) {
-            let events = this.nativeEvent[scope];
-            let elements = this._element.querySelectorAll(`[scope="${scope}"]`);
-            let elementsArray = Array.prototype.slice.call(elements);
-            elementsArray.forEach((element: HTMLElement) => {
-                events.forEach((event: INativeEvent) => {
-                    element.addEventListener(event.type, new EventListenerHandle({
-                        context: this,
-                        handle: event.handle,
-                        arguments: event.arguments
-                    }));
-                });
-            });
-        }
+    public randomScope(): string {
+        return Scope.getScope();
     }
 
     /**
@@ -151,6 +104,5 @@ export class BaseComponent {
     public static get className(): string {
         return this.toString().match(/function\s*([^(]*)\(/)[1];
     }
-
 
 }

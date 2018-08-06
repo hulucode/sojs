@@ -36,7 +36,7 @@ export class Parse {
             attributes: []
         };
         // 获取节点名称
-        if (/<(.+?)\s/.test(tag) || /<(.+?)\s*\/?>/.test(tag)) {
+        if (/<(.+?)\s/.test(tag) || /<\/?(.+?)\s*\/?>/.test(tag)) {
             tagInfo.type = RegExp.$1;
         }
         // 获取节点所有属性
@@ -60,10 +60,8 @@ export class Parse {
      * @param nodes 节点数组
      */
     public static getTagTree(template: string): TagInfo {
-
         // 模板字符串转为数组
         let nodes: string[] = this.templateToArray(template);
-
         let tagTree: TagInfo = null;
         let tagTrees: TagInfo[] = null;
         let parentNode: TagInfo = null;
@@ -105,5 +103,4 @@ export class Parse {
         })
         return tagTree;
     }
-
 }

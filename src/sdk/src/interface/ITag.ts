@@ -7,6 +7,7 @@ export interface TagAttrs {
 
 export interface TagInfo {
     type: string,
+    scope?: string,
     attributes: TagAttrs[],
     children?: any[]
 }

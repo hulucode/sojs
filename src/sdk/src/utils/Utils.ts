@@ -5,12 +5,18 @@ export class Utils {
      * 将字符串转为DOM
      * @param tpl 模板字符串
      */
-    public static parseDom(tpl: string): HTMLElement {
-        var objE = document.createElement("div");
+    public static parseStringToDom(tpl: string): HTMLElement {
+        let objE = document.createElement("div");
         objE.innerHTML = tpl;
         return objE.firstChild as HTMLElement;
     };
-    
+
+    public static parseFragmentToString(dom: DocumentFragment): string {
+        let el = document.createElement('div');
+        el.appendChild(dom);
+        return el.innerHTML;
+    }
+
     /**
     * 将类名转为中划线模式
     * @param name 组件类名

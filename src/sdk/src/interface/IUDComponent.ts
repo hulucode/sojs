@@ -1,5 +1,6 @@
 
 import { Component } from '../Component';
+import { TagInfo } from './ITag';
 
 export const async = 'async';
 export const sync = 'sync';
@@ -10,8 +11,7 @@ export interface IAttribute {
 }
 
 export interface IUDComponent {
-    loadType: string,
-    scope: string,
     className: typeof Component | string,
+    loadType?: string,
     classPath?: string
 }

@@ -1,5 +1,7 @@
 
-import { TagAttrs } from '../interface/ITag';
+
+import { Parse } from '../Parse';
+
 export class If {
 
     /**
@@ -7,21 +9,21 @@ export class If {
      * @param node 节点
      */
     public static isIf(node: string): boolean {
-        if (node == 'if') {
+        if (/^<\/?if/.test(node)) {
             return true;
         }
         return false;
     }
 
     /**
-      * 根据属性列表返回if表达式
-      * @param attributes 属性列表
-      */
-    public static getExpression(attributes?: TagAttrs[]): string {
+     * 根据节点返回相应表达式
+     * @param node 节点
+     */
+    public static getExpression(node: string): string {
         let expression = '';
-        if (attributes) {
-            let operator = attributes[0].value;
-            operator = operator.replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+        if (/^<if/.test(node)) {
+            let operator = Parse.getTagInfo(node).attributes[0].value;
+            operator = operator.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
             operator = operator.substring(1, operator.length - 1);
             expression = `if(${operator}){`;
         } else {

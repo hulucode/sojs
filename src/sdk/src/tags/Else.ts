@@ -1,4 +1,5 @@
 
+import { TagAttrs } from '../interface/ITag';
 export class Else {
 
     /**
@@ -6,7 +7,7 @@ export class Else {
      * @param node 节点
      */
     public static isElse(node: string): boolean {
-        if (/^<\/?else/.test(node)) {
+        if (node == 'else') {
             return true;
         }
         return false;
@@ -17,9 +18,9 @@ export class Else {
      * 根据节点返回相应表达式
      * @param node 节点
      */
-    public static getExpression(node: string): string {
+    public static getExpression(attr?: TagAttrs[]): string {
         let expression = '';
-        if (/^<else/.test(node)) {
+        if (attr) {
             expression = `else{`;
         } else {
             expression = `}`;

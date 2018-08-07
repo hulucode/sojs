@@ -1,4 +1,5 @@
 
+import { TagAttrs } from '../interface/ITag';
 export class Text {
 
     /**
@@ -6,7 +7,7 @@ export class Text {
     * @param node 节点
     */
     public static isText(node: string): boolean {
-        if (/^[^<].*[^>]$/.test(node)) {
+        if (node == 'text') {
             return true;
         }
         return false;
@@ -16,11 +17,11 @@ export class Text {
      * 根据节点返回相应表达式
      * @param node 节点
      */
-    public static getExpression(node: string): string {
-        let expression = node;
+    public static getExpression(attr?: TagAttrs[]): string {
+        let expression = attr[0].value;
         expression = expression.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
         expression = expression.replace(/{/g, "'+(").replace(/}/g, ")+'");
-        return `expression.push('${expression}');`;
+        return expression;
     }
 
 }

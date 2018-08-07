@@ -1,5 +1,5 @@
 
-import { TagAttrs } from '../interface/ITag';
+import { TagAttrs, TagInfo } from '../interface/ITag';
 import { Scope } from '../utils/Scope';
 import { Parse } from '../Parse';
 
@@ -50,42 +50,18 @@ export class Tag {
     }
 
     /**
-     * 通过节点名称判定是否是单标签
-     * @param node 节点名称
-     */
-    public static isSingle(node: string): boolean {
-        let bl = false;
-        this.SINGLETAGS.forEach(t => {
-            if (t == RegExp.$1) {
-                bl = true;
-            }
-        });
-        return bl;
-    }
-
-    /**
     * 根据节点返回相应表达式
     * @param node 节点
     */
-    public static getExpression(node: string): string {
-        let tagInfo = Parse.getTagInfo(node);
-        if (this.isSingleTag(node)) {
-            let attr_event = this.getAttrAndEvent(tagInfo.attributes);
-            return `expression.push('<${tagInfo.type} ${attr_event.attr}/>');${attr_event.event}`;
-        } else if (this.isStartTag(node)) {
-            let attr_event = this.getAttrAndEvent(tagInfo.attributes);
-            return `expression.push('<${tagInfo.type}${attr_event.attr}>');${attr_event.event}`;
-        }
-        else if (this.isEndTag(node)) {
-            return `expression.push('</${tagInfo.type}>');`;
-        }
+    public static getAttrEvent(tagInfo: TagInfo): { attr: string, event: string } {
+        return this.getAttrAndEvent(tagInfo.attributes);
     }
 
     /**
      * 通过标签属性获取属性和事件表达式
      * @param tagAttrs 标签属性列表
      */
-    private static getAttrAndEvent(tagAttrs: TagAttrs[]): { attr: string, event: string } {
+    public static getAttrAndEvent(tagAttrs: TagAttrs[]): { attr: string, event: string } {
         let scope = Scope.getScope();
         let attr_expression = '';
         let event_expression = '';

@@ -5,10 +5,7 @@ import { EventEmitter } from './events/emitter.event';
 import { Compiler } from './Compiler';
 import { INativeEvent } from './interface/INativeEvent';
 import { EventListenerHandle } from './EventListenerHandle';
-import { Parse } from './Parse';
 import { TagInfo } from './interface/ITag';
-import { Tag } from './tags/Tag';
-import { Scope } from './utils/Scope';
 
 export class UserDefined {
 
@@ -38,10 +35,10 @@ export class UserDefined {
 
     // 保存当前组件Children
     private _childComponentInfo: TagInfo[] = [];
-    private addChildComponentInfo(tagInfo: TagInfo) {
+    public addChildComponentInfo(tagInfo: TagInfo) {
         this._childComponentInfo.push(tagInfo);
     }
-    private getChildComponentInfo(): TagInfo[] {
+    public getChildComponentInfo(): TagInfo[] {
         return this._childComponentInfo;
     }
 
@@ -49,151 +46,23 @@ export class UserDefined {
     * 判断是否为自定义组件
     * @param node 节点
     */
-    public isUserDefined(node: string): boolean {
+    public isUserDefined(type: string): boolean {
         let isUserDefined = false;
-        let tagInfo = Parse.getTagInfo(node);
         this._dependencies.forEach(dependencie => { // 遍历查找是否是自定义组件
             if (typeof dependencie == 'string' && /(.+?)\[.+\]/.test(dependencie)) { // 异步组件
                 let className = RegExp.$1;
                 let name = Utils.camelToLine(className);
-                if (name == tagInfo.type) {
+                if (name == type) {
                     isUserDefined = true;
                 }
             } else { // 同步组件
                 let name = Utils.camelToLine(dependencie.className);
-                if (name == tagInfo.type) {
+                if (name == type) {
                     isUserDefined = true;
                 }
             }
         });
         return isUserDefined;
-    }
-
-    /**
-     * 获取自定义组件表达式和属性
-     * @param node 节点
-     */
-    public getExpression(node: string): string {
-        let tagInfo = Parse.getTagInfo(node);
-        if (/<[^\/].+>/.test(node)) { // 开始标签
-            let expression = '';
-            tagInfo.attributes.forEach(attr => {
-                let name = attr.name;
-                let value = attr.value.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
-                if (/{(.+)}/.test(value)) { // 将数据保存为json字符串
-                    value = value.replace(/{(.+)}/, `'+(JSON.stringify(${RegExp.$1}))+'`);
-                }
-                expression += ` ${name}="${value}"`;
-            });
-            return `expression.push('<${tagInfo.type}${expression}>');`;
-        } else { //结束标签
-            return `expression.push('</${tagInfo.type}>');`;
-        }
-    }
-
-    /**
-     * 获取解析自定义组件后的准备dom字符串
-     * @param htmlString render后的字符串
-     */
-    public getHtmlString(htmlString: string): string {
-        let tagInfo = Parse.getTagTree(htmlString);
-        let expression: string[] = [];
-        this.getExcludeString(expression, tagInfo);
-        return expression.join('');
-    }
-
-    /**
-     * 递归排队自定义组件标签
-     * @param expression 字符串数组
-     * @param tagInfo 节点信息
-     */
-    private getExcludeString(expression: string[], tagInfo: TagInfo) {
-        if (this.isUserDefined(`<${tagInfo.type}>`)) { // 自定义开始标签
-            // 生成组件scope
-            tagInfo.scope = Scope.getScope();
-            // 保存组件信息
-            this.addChildComponentInfo(JSON.parse(JSON.stringify(tagInfo)));
-            // 去除子组件列表阻止此次渲染
-            tagInfo.children = [];
-            expression.push(`<w-${tagInfo.type} scope="${tagInfo.scope}">`);
-        } else if (tagInfo.type == 'text') { // 文本开始标签
-            expression.push(tagInfo.attributes[0].value);
-        } else {
-            let attributes = '';
-            tagInfo.attributes.forEach(attr => {
-                attributes += ` ${attr.name}="${attr.value}"`;
-            });
-            if (Tag.isSingle(tagInfo.type)) { // 单标签开始
-                expression.push(`<${tagInfo.type}${attributes}`);
-            }
-            else {
-                expression.push(`<${tagInfo.type}${attributes}>`);
-            }
-        }
-        // 存在子节点则继续循环递归
-        if (tagInfo.children) {
-            tagInfo.children.forEach(info => {
-                this.getExcludeString(expression, info);
-            });
-        }
-        if (this.isUserDefined(`<${tagInfo.type}>`)) { // 自定义结束标签
-            expression.push(`</w-${tagInfo.type}>`);
-        } else if (tagInfo.type != 'text') { // 非文本结束标签
-            if (Tag.isSingle(tagInfo.type)) { // 单标签结束
-                expression.push(`/>`);
-            } else {
-                expression.push(`</${tagInfo.type}>`);
-            }
-        }
-    }
-
-    /**
-     * 处理children taginfo,生成模板字符串
-     * @param tagInfo chilren taginfo
-     */
-    private getChildrens(tagInfos: TagInfo[]): string[] {
-        let childrenString: string[] = [];
-        tagInfos.forEach(tagInfo => {
-            let expression: string[] = [];
-            this.getChildrenString(expression, tagInfo);
-            childrenString.push(expression.join(''));
-        });
-        return childrenString;
-    }
-
-    /**
-     * 
-     * @param expression 表达式数组
-     * @param tagInfo children taginfo
-     */
-    private getChildrenString(expression: string[], tagInfo: TagInfo) {
-        if (tagInfo.type == 'text') { // 文本开始标签
-            expression.push(tagInfo.attributes[0].value);
-        } else {
-            let attributes = '';
-            tagInfo.attributes.forEach(attr => {
-                attributes += ` ${attr.name}="${attr.value}"`;
-            });
-            if (Tag.isSingle(tagInfo.type)) { // 单标签开始
-                expression.push(`<${tagInfo.type}${attributes}`);
-            }
-            else {
-                expression.push(`<${tagInfo.type}${attributes}>`);
-            }
-        }
-        // 存在子节点则继续循环递归
-        if (tagInfo.children) {
-            tagInfo.children.forEach(info => {
-                this.getExcludeString(expression, info);
-            });
-        }
-        if (tagInfo.type != 'text') { // 非文本结束标签
-            if (Tag.isSingle(tagInfo.type)) { // 单标签结束
-                expression.push(`/>`);
-            } else {
-                expression.push(`</${tagInfo.type}>`);
-            }
-        }
     }
 
     /**
@@ -203,31 +72,45 @@ export class UserDefined {
     */
     private currentElementCreated(event: string, scope: string) {
         if (event == 'element-created' && this._currentComponent.scope == scope) {
-            this.getChildComponentInfo().forEach((tagInfo: TagInfo) => {
-                let componentInfo = this.getComponentInfo(tagInfo.type);
-                if (componentInfo.loadType == sync) {
-                    // 创建组件实例
-                    let component: Component = new (componentInfo.className as typeof Component)();
-                    // 设置组件的parent
-                    component.parent = this._currentComponent;
-                    // 传递attributes
-                    tagInfo.attributes.forEach(attr => {
-                        component.constructor.prototype[attr.name] = JSON.parse(attr.value);
-                    });
-                    // 传递children
-                    component.children = this.getChildrens(tagInfo.children);
-                    // 渲染组件并获取DOM
-                    let newElement = Compiler.component(component).getHtmlElement();
-                    // 获取组件占位符
-                    let oldElement = this._currentComponent.element.querySelector(`[scope="${tagInfo.scope}"]`);
-                    // 替换占位符为真实组件
-                    oldElement.parentElement.replaceChild(newElement, oldElement);
-                } else {
-                    console.log('异步组件：', componentInfo.className);
-                }
+            this._currentComponent.getChildComponents().forEach((tagInfo: TagInfo) => {
+                this.renderChildComponent(tagInfo);
             });
             // 监听原生事件
             this.addNativeEventListener();
+        }
+    }
+
+    /**
+     * 通过标签信息渲染子组件
+     * @param tagInfo 标签信息
+     */
+    private renderChildComponent(tagInfo: TagInfo) {
+        let componentInfo = this.getComponentInfo(tagInfo.type);
+        if (componentInfo.loadType == sync) {
+            // 获取占位节点
+            let elements = this._currentComponent.element.querySelectorAll(`[scope="${tagInfo.scope}"]`);
+            // NodeList转为常规数组
+            let oldElements: HTMLElement[] = Array.prototype.slice.call(elements);
+            for (let index = 0; index < oldElements.length; index++) {
+                // 创建组件实例
+                let component: Component = new (componentInfo.className as typeof Component)();
+                // 设置组件的parent
+                component.parent = this._currentComponent;
+                // 传递attributes
+                // tagInfo.attributes.forEach(attr => {
+                //     component.constructor.prototype[attr.name] = JSON.parse(attr.value);
+                // });
+                // 传递children
+                component.children = tagInfo.children;
+                // 渲染组件并获取DOM
+                let newElement = Compiler.component(component).getHtmlElement();
+                // 占位节点
+                let oldElement = oldElements[index];
+                // 替换占位为真实节点
+                oldElement.parentElement.replaceChild(newElement, oldElement);
+            }
+        } else {
+            console.log('异步组件：', componentInfo.className);
         }
     }
 

@@ -1,5 +1,6 @@
 
 import { Parse } from '../Parse';
+import { TagAttrs } from '../interface/ITag';
 
 export class For {
 
@@ -8,7 +9,7 @@ export class For {
      * @param node 节点
      */
     public static isFor(node: string): boolean {
-        if (/^<\/?for/.test(node)) {
+        if (node == 'for') {
             return true;
         }
         return false;
@@ -18,10 +19,10 @@ export class For {
      * 根据节点返回相应表达式
      * @param node 节点
      */
-    public static getExpression(node: string): string {
+    public static getExpression(attrs?: TagAttrs[]): string {
         let expression = '';
-        if (/^<for/.test(node)) {
-            let operator = Parse.getTagInfo(node).attributes[0].value;
+        if (attrs) {
+            let operator = attrs[0].value;
             operator = operator.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
             operator = operator.substring(1, operator.length - 1);
             expression = `for(${operator}){`;

@@ -1,6 +1,7 @@
 import { Scope } from '../utils/Scope';
 import { EventEmitter } from '../events/emitter.event';
 import { INativeEvent } from '../interface/INativeEvent';
+import { TagInfo } from '../interface/ITag';
 
 export class BaseComponent {
 
@@ -14,7 +15,7 @@ export class BaseComponent {
     private _scope: string;
     public get scope(): string {
         if (!this._scope) {
-            this._scope = this.randomScope();
+            this._scope = Scope.getScope();
         }
         return this._scope;
     }
@@ -44,13 +45,22 @@ export class BaseComponent {
         return this._parent;
     }
 
-    // 模板子元素
-    private _children: string[];
+    // children元素
+    private _children: string[] = [];
     public set children(children: string[]) {
         this._children = children;
     }
     public get children(): string[] {
-        return this._children ? this._children : [];
+        return this._children;
+    }
+
+    // 子组件列表
+    private _childComponents: TagInfo[] = [];
+    public addChildComponents(childComponent: TagInfo) {
+        this._childComponents.push(childComponent);
+    }
+    public getChildComponents(): TagInfo[] {
+        return this._childComponents;
     }
 
     // 模板编译后生成的函数
@@ -78,13 +88,6 @@ export class BaseComponent {
     }
 
     /**
-     * 随机生成scope
-     */
-    public randomScope(): string {
-        return Scope.getScope();
-    }
-
-    /**
      * 依赖的组件列表
      */
     public dependencies(): any[] {
@@ -103,6 +106,11 @@ export class BaseComponent {
      */
     public static get className(): string {
         return this.toString().match(/function\s*([^(]*)\(/)[1];
+    }
+
+    public test(data: any) {
+        console.log(data);
+
     }
 
 }

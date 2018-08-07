@@ -10,7 +10,6 @@ export class Select extends Component {
     private _data:number;
     public set data(data:number){
         this._data = data;
-        console.log('Select:',data);
     }
     public get data():number{
         return this._data;

@@ -5,8 +5,8 @@ import { Select } from './Select';
 <div>
     <for operator="{let item of this.data}">
         <span style="color:red">{this.children.join('')}</span>
-        <select>{item}:menu里面的Select</select>
     </for>
+    <h2>menu</h2>
 </div>
 `)
 export class Menu extends Component {
@@ -16,11 +16,6 @@ export class Menu extends Component {
     }
     public get data(): number[] {
         return this._data ? this._data : [];
-    }
-
-    public set test(test:any){
-        console.log('menu==>>',test);
-        
     }
 
     public dependencies():any{

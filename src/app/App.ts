@@ -5,11 +5,14 @@ import { Select } from './Select';
 
 @Template(`
 <div style="width:100%;">
-    <div style="cursor:pointer;color:blue;padding:20px;{!this.title?'background-color:gray':''}" 
+    <div style="cursor:pointer;color:blue;margin:20px;text-align:center;padding:10px;{!this.title?'background-color:gray':''}" 
     onclick="{this.clickHandle('click-event')}">click-event</div>
     <for operator="{let item of this.data}">
-        <menu data="{[1,2,3]}">
+        <br>
+        <div>{item}</div>
+        <menu data="{[item]}">
             <h2>{item}:app里面的Menu</h2>
+            <select>123456</select>
         </menu>
     </for>
 </div>
@@ -18,10 +21,11 @@ export class App extends Component {
 
     public data: number[] = [];
 
-    constructor(){
-        super()
-        while(this.data.length < 10){
-            this.data.push(1);
+    constructor() {
+        super();
+        let index = 1;
+        while (this.data.length < 3) {
+            this.data.push(index++);
         }
     }
 

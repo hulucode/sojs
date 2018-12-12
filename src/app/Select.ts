@@ -1,4 +1,4 @@
-import { Component, Template } from "water-js";
+import { Component, Template } from "so-js";
 import { Menu } from './Menu';
 
 @Template(`

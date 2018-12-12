@@ -1,1 +1,1 @@
-WaterJS is an MIT-licensed open source project.
+SOJS is an MIT-licensed open source project.

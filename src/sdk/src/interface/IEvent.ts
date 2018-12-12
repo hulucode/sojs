@@ -1,5 +1,5 @@
-interface WaterEvent extends Event {
+interface soEvent extends Event {
     data: any[];
 }
 
-export { WaterEvent as Event };
+export { soEvent as Event };

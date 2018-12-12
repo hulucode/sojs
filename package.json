@@ -1,11 +1,11 @@
 {
-  "name": "water-js",
+  "name": "so-js",
   "version": "1.0.0",
   "description": "js frame",
   "scripts": {
     "start": "webpack-dev-server"
   },
-  "author": "WaterDesign Team",
+  "author": "SoDesign Team",
   "license": "MIT",
   "devDependencies": {
     "html-loader": "^0.5.5",
@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "typescript": "^2.9.2",
-    "water-js": "file:./src/sdk"
+    "so-js": "file:./src/sdk"
   }
 }

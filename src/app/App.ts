@@ -1,4 +1,4 @@
-import { Component, Template, Event } from "water-js";
+import { Component, Template, Event } from "so-js";
 
 import { Menu } from './Menu';
 import { Select } from './Select';
